@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Trắc nghiệm: Không gian vector con | Đại số tuyến tính</title>
+    <!-- MathJax 3 (hiển thị công thức toán học chuẩn, cấu hình để tự động render lại) -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                packages: {'[+]': ['ams', 'boldsymbol']}
+            },
+            startup: {
+                typeset: false  // sẽ gọi thủ công sau khi load
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'math'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9f0f5 0%, #cfdfed 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Times New Roman', serif;
+            padding: 30px 20px;
+            color: #1e2f3e;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            padding: 20px 28px 40px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #1a4b6e;
+            border-left: 8px solid #e67e22;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            color: #2c3e66;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #b0c4de;
+            padding-bottom: 12px;
+            font-style: italic;
+            font-size: 1rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #f0f4fa;
+            padding: 12px 24px;
+            border-radius: 60px;
+        }
+
+        .badge {
+            background: #1e466e;
+            color: white;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .stats {
+            font-weight: bold;
+            background: #e9ecef;
+            padding: 5px 15px;
+            border-radius: 30px;
+        }
+
+        button {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+
+        button:hover {
+            background: #1f5068;
+            transform: scale(0.97);
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 28px;
+            margin-bottom: 28px;
+            padding: 20px 26px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2edf7;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .q-num {
+            background: #0b5e7e;
+            color: white;
+            font-weight: bold;
+            border-radius: 40px;
+            padding: 4px 14px;
+            font-size: 0.85rem;
+        }
+
+        .level {
+            font-size: 0.7rem;
+            background: #f4d03f;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        .level.easy { background: #a9dfbf; color: #145a32; }
+        .level.medium { background: #f9e79f; color: #7d6608; }
+        .level.hard { background: #f5b7b1; color: #7b241c; }
+        .level.theory { background: #d2b4de; color: #4a235a; }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 12px 0 18px 0;
+            line-height: 1.45;
+            background: #fefcf5;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 12px 0 12px;
+        }
+
+        .opt {
+            background: #f8faff;
+            border: 1px solid #ccdbe9;
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opt:hover {
+            background: #eef3fc;
+            border-color: #6c8fb3;
+            transform: translateX(3px);
+        }
+
+        .opt-letter {
+            font-weight: bold;
+            background: #e2eaf5;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-size: 1rem;
+        }
+
+        .opt-text {
+            flex: 1;
+            font-size: 0.98rem;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding: 14px 20px;
+            border-radius: 20px;
+            background: #f1f9ff;
+            display: none;
+            border-left: 6px solid #2c7da0;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .feedback.correct-feedback {
+            background: #e0f2e9;
+            border-left-color: #2e7d32;
+            display: block;
+        }
+
+        .feedback.wrong-feedback {
+            background: #ffe6e5;
+            border-left-color: #c0392b;
+            display: block;
+        }
+
+        .correct-choice {
+            background: #c8f0d1 !important;
+            border-color: #2e7d32 !important;
+        }
+
+        .wrong-choice {
+            background: #ffdad8 !important;
+            border-color: #c0392b !important;
+        }
+
+        .tip {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            color: #c4450c;
+            font-weight: 500;
+            background: #fff3e0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .download-area {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #downloadBtn {
+            background: #2c3e50;
+            padding: 12px 36px;
+            font-size: 1rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 15px; }
+            .opt { padding: 8px 12px; }
+            .question-text { font-size: 1rem; }
+        }
+        
+        /* Đảm bảo công thức toán hiển thị đẹp */
+        .math-inline, .math-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        .feedback .tip, .feedback div {
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="quizApp">
+    <h1>📐 Không gian vector con</h1>
+    <div class="sub">Kiểm tra kiến thức về không gian con, điều kiện đóng kín, cơ sở & số chiều | <strong>MathJax</strong> hiển thị công thức toán chuẩn xác</div>
+
+    <div class="filter-bar">
+        <div class="badge">🎯 20 câu (5 lý thuyết + 15 bài tập)</div>
+        <div class="stats" id="scoreDisplay">📊 Đã trả lời: 0 / 20</div>
+        <button id="resetBtn">🔄 Làm lại tất cả</button>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="download-area">
+        <button id="downloadBtn">💾 Tải file HTML (đề + đáp án chi tiết)</button>
+    </div>
+    <footer>✨ Bấm vào đáp án → hiện xanh/đỏ + giải thích + mẹo. <strong>Tất cả công thức toán đều được render bằng MathJax chuẩn.</strong></footer>
+</div>
+
+<script>
+    // ---------------------- BỘ ĐỀ: KHÔNG GIAN VECTOR CON ----------------------
+    // 5 Lý thuyết + 5 dễ + 5 trung bình + 5 khó
+    const questionsData = [
+        // === 1-5: LÝ THUYẾT ===
+        { id: 1, text: "Tập nào sau đây LUÔN là không gian vector con của \\( \\mathbb{R}^2 \\)?", options: ["Tập chỉ gồm vector không", "Tập các vector có tọa độ nguyên", "Tập các vector có độ dài bằng 1", "Tập các vector có tọa độ dương"], correct: 0, level: "theory", explanation: "Chỉ có tập \\(\\{\\mathbf{0}\\}\\) và toàn bộ không gian là không gian con. Tập chỉ gồm vector không thỏa mãn đóng kín với phép cộng và nhân vô hướng.", tip: "🧠 Nhớ: Không gian con phải chứa vector không và đóng kín với hai phép toán." },
+        { id: 2, text: "Điều kiện cần và đủ để tập \\(W\\) là không gian con của \\(V\\) là:", options: ["\\(W\\) chứa vector không", "\\(W\\) đóng với phép cộng", "\\(W\\) đóng với phép nhân vô hướng", "\\(W\\) khác rỗng và đóng với hai phép toán"], correct: 3, level: "theory", explanation: "Định lý: \\(W \\subset V\\) là không gian con \\(\\iff W \\neq \\emptyset\\) và \\(\\forall u,v \\in W, \\forall \\alpha \\in \\mathbb{R}: u+v \\in W, \\alpha u \\in W\\).", tip: "✅ Kiểm tra nhanh: (1) chứa 0, (2) đóng cộng, (3) đóng nhân vô hướng." },
+        { id: 3, text: "Trong không gian \\( \\mathbb{R}^3 \\), tập \\( W = \\{ (x,y,z) \\mid x + y + z = 0 \\} \\) là:", options: ["Không phải không gian con", "Là không gian con có số chiều 2", "Là không gian con có số chiều 1", "Là siêu phẳng không đi qua gốc"], correct: 1, level: "theory", explanation: "Phương trình thuần nhất \\(x+y+z=0\\) đi qua gốc, đóng kín, là mặt phẳng qua gốc → \\(\\dim = 2\\).", tip: "✈️ Mặt phẳng qua gốc luôn là không gian con chiều 2 trong \\( \\mathbb{R}^3\\)." },
+        { id: 4, text: "Giao của hai không gian vector con bất kỳ của cùng một không gian V là:", options: ["Không là không gian con", "Luôn là không gian con", "Có thể không là không gian con", "Luôn bằng \\(\\{0\\}\\)"], correct: 1, level: "theory", explanation: "Giao của hai không gian con vẫn thỏa mãn các tính chất đóng, nên là không gian con.", tip: "🔗 Giao của các không gian con luôn là không gian con." },
+        { id: 5, text: "Cho \\( W_1, W_2 \\) là không gian con của \\(V\\). Khi đó tổng \\(W_1 + W_2 = \\{ w_1 + w_2 \\mid w_i \\in W_i \\}\\) là:", options: ["Không là không gian con", "Là không gian con của V", "Chỉ là không gian con nếu \\(W_1 \\cap W_2 = \\{0\\}\\)", "Luôn bằng \\(V\\)"], correct: 1, level: "theory", explanation: "Tổng của hai không gian con là không gian con (chứa 0, đóng với phép cộng và vô hướng).", tip: "➕ Tổng hai không gian con luôn là không gian con." },
+        
+        // === 6-10: BÀI TẬP DỄ ===
+        { id: 6, text: "Trong \\( \\mathbb{R}^2 \\), tập \\( W = \\{ (x,0) \\mid x \\in \\mathbb{R} \\} \\) có phải không gian con không?", options: ["Có, là trục Ox", "Không, vì không chứa 0", "Có, chiều 2", "Không, đóng nhân sai"], correct: 0, level: "easy", explanation: "W chính là trục hoành, chứa \\((0,0)\\), đóng với cộng và nhân vô hướng → không gian con \\(\\dim = 1\\).", tip: "📏 Mọi đường thẳng qua gốc đều là không gian con trong \\( \\mathbb{R}^2\\)." },
+        { id: 7, text: "Xét tập \\( W = \\{ (x,y) \\in \\mathbb{R}^2 \\mid 2x - y = 0 \\} \\). Khẳng định nào đúng?", options: ["\\(W\\) không là không gian con", "\\(W\\) là không gian con 1 chiều", "\\(W\\) là không gian con 2 chiều", "\\(W\\) không chứa vector 0"], correct: 1, level: "easy", explanation: "Phương trình thuần nhất \\(2x - y = 0 \\Leftrightarrow y = 2x\\), là đường thẳng qua gốc → không gian con \\(\\dim = 1\\).", tip: "📐 Dạng \\(ax+by=0\\) luôn là không gian con (đi qua gốc)." },
+        { id: 8, text: "Trong \\( \\mathbb{R}^3 \\), tập hợp nào dưới đây KHÔNG là không gian con?", options: ["\\( \\{(x,y,z) \\mid x=0\\} \\)", "\\( \\{(x,y,z) \\mid y=2x\\} \\)", "\\( \\{(x,y,z) \\mid x+y+z=1\\} \\)", "\\( \\{(0,0,0)\\} \\)"], correct: 2, level: "easy", explanation: "Tập \\(x+y+z=1\\) không chứa vector \\((0,0,0)\\) → không phải không gian con.", tip: "❌ Mọi không gian con bắt buộc phải chứa vector không." },
+        { id: 9, text: "Cho \\( W = \\{ (a, a+b, b) \\mid a,b \\in \\mathbb{R} \\} \\subset \\mathbb{R}^3 \\). Số chiều của W là:", options: ["1", "2", "3", "0"], correct: 1, level: "easy", explanation: "Biểu diễn \\((a, a+b, b) = a(1,1,0) + b(0,1,1)\\). Hai vector độc lập tuyến tính → \\(\\dim = 2\\).", tip: "📌 Tìm cơ sở bằng cách tách tham số." },
+        { id: 10, text: "Tập \\( W = \\{ (x,y) \\mid xy = 0 \\} \\) trong \\( \\mathbb{R}^2 \\) có là không gian con không?", options: ["Có", "Không, vì không đóng với phép cộng", "Có, vì chứa gốc", "Không, thiếu vector không"], correct: 1, level: "easy", explanation: "Ví dụ \\((1,0)\\) và \\((0,1)\\) đều thuộc W nhưng tổng \\((1,1)\\) có tích \\(1 \\neq 0\\) → không đóng cộng.", tip: "⚠️ Hợp của hai trục tọa độ không đóng kín." },
+        
+        // === 11-15: TRUNG BÌNH ===
+        { id: 11, text: "Trong \\( \\mathbb{R}^3 \\), xét \\( W = \\{ (x,y,z) \\mid x - y = 0 \\text{ và } y + z = 0 \\} \\). Số chiều của W là:", options: ["0", "1", "2", "3"], correct: 1, level: "medium", explanation: "Hệ: \\(x=y\\) và \\(z=-y\\) → \\((t, t, -t) = t(1,1,-1)\\) → \\(\\dim = 1\\).", tip: "📏 Giao hai mặt phẳng qua gốc (không trùng) là đường thẳng → \\(\\dim = 1\\)." },
+        { id: 12, text: "Cho \\( W = \\{ A \\in M_{2\\times 2}(\\mathbb{R}) \\mid A^T = A \\} \\) (ma trận đối xứng). Khẳng định đúng:", options: ["\\(W\\) không là không gian con", "\\(W\\) là không gian con, \\(\\dim = 3\\)", "\\(W\\) là không gian con, \\(\\dim = 4\\)", "\\(W\\) chỉ gồm ma trận 0"], correct: 1, level: "medium", explanation: "Ma trận đối xứng \\(2\\times 2\\) có dạng \\(\\begin{bmatrix} a & b \\\\ b & c \\end{bmatrix}\\) → không gian con 3 chiều.", tip: "🧮 Cơ sở: \\(\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}, \\begin{bmatrix}0&1\\\\1&0\\end{bmatrix}, \\begin{bmatrix}0&0\\\\0&1\\end{bmatrix}\\)." },
+        { id: 13, text: "Tập \\( W = \\{ p(x) \\in \\mathcal{P}_2 \\mid p(1)=0 \\} \\) (đa thức bậc ≤2). Khẳng định nào đúng?", options: ["Không là không gian con", "Là không gian con chiều 2", "Là không gian con chiều 3", "Chỉ gồm đa thức không"], correct: 1, level: "medium", explanation: "Điều kiện \\(p(1)=0\\) là tuyến tính, \\(\\dim(\\mathcal{P}_2) = 3\\) → \\(\\dim W = 3-1 = 2\\).", tip: "⭐ Với đa thức, điều kiện \\(p(a)=0\\) tạo không gian con codim 1." },
+        { id: 14, text: "Trong \\( \\mathbb{R}^4 \\), cho \\( W = \\text{span}\\{ (1,0,1,0), (0,1,0,1), (1,1,1,1) \\} \\). Tìm số chiều của W.", options: ["1", "2", "3", "4"], correct: 1, level: "medium", explanation: "Ba vector, nhưng \\((1,1,1,1) = (1,0,1,0)+(0,1,0,1)\\) → phụ thuộc tuyến tính. Vậy chỉ có 2 vector độc lập → \\(\\dim = 2\\).", tip: "🔍 Tìm hạng ma trận tạo bởi các vector dòng/cột." },
+        { id: 15, text: "Tập nào sau đây là không gian con của \\( \\mathbb{R}^3 \\) ?", options: ["\\( \\{ (x,y,z) \\mid x^2 + y^2 = 0 \\} \\)", "\\( \\{ (x,y,z) \\mid x + y + z \\ge 0 \\} \\)", "\\( \\{ (x,y,z) \\mid xyz = 0 \\} \\)", "\\( \\{ (x,y,z) \\mid x = 2y \\} \\)"], correct: 3, level: "medium", explanation: "\\(x=2y \\Leftrightarrow x-2y=0\\) là phương trình thuần nhất → không gian con (mặt phẳng qua gốc).", tip: "📌 Dạng tuyến tính thuần nhất mới tạo không gian con." },
+        
+        // === 16-20: KHÓ ===
+        { id: 16, text: "Cho \\( W = \\{ (x,y,z) \\in \\mathbb{R}^3 \\mid x + y = 0 \\text{ và } 2x - z = 0 \\} \\). Tìm một cơ sở của W.", options: ["\\( \\{(1,-1,2)\\} \\)", "\\( \\{(1,-1,2), (0,0,1)\\} \\)", "\\( \\{(1,-1,2), (0,1,0)\\} \\)", "\\( \\{(1,0,2)\\} \\)"], correct: 0, level: "hard", explanation: "Giải hệ: \\(y = -x\\), \\(z = 2x\\) ⇒ \\((x, -x, 2x) = x(1,-1,2)\\) → cơ sở gồm 1 vector.", tip: "🧩 Giao hai mặt phẳng qua gốc thường là đường thẳng." },
+        { id: 17, text: "Cho không gian con \\( W = \\{ (x,y,z,t) \\in \\mathbb{R}^4 \\mid x - y + t = 0,\\; y + z = 0 \\} \\). Số chiều của W là:", options: ["1", "2", "3", "4"], correct: 1, level: "hard", explanation: "2 phương trình độc lập tuyến tính trong \\(\\mathbb{R}^4\\) ⇒ \\(\\dim = 4 - 2 = 2\\).", tip: "📐 \\(\\dim\\)(không gian con) = số biến - số phương trình độc lập." },
+        { id: 18, text: "Cho \\( U = \\{ (a, b, c, d) \\mid a+b = c+d \\} \\) trong \\( \\mathbb{R}^4 \\). Tìm số chiều của U.", options: ["1", "2", "3", "4"], correct: 2, level: "hard", explanation: "Phương trình \\(a+b-c-d=0\\) là 1 phương trình độc lập → \\(\\dim = 4-1 = 3\\).", tip: "✍️ Mỗi phương trình thuần nhất độc lập giảm chiều đi 1." },
+        { id: 19, text: "Trong \\( \\mathbb{R}^3 \\), cho \\( W_1 = \\text{span}\\{(1,0,1)\\}, W_2 = \\text{span}\\{(0,1,0), (1,1,1)\\} \\). Số chiều của \\( W_1 + W_2 \\) là:", options: ["1", "2", "3", "4"], correct: 2, level: "hard", explanation: "\\(W_1\\) có \\(\\dim = 1\\), \\(W_2\\) có \\(\\dim = 2\\). \\((1,0,1) = (1,1,1)-(0,1,0) \\in W_2\\) → \\(W_1 \\subset W_2\\) ⇒ tổng = \\(W_2\\) ⇒ \\(\\dim = 2\\).", tip: "⚡ Nếu một không gian con nằm trong không gian kia, tổng bằng không gian lớn hơn." },
+        { id: 20, text: "Cho \\( W = \\{ A \\in M_{2\\times 2}(\\mathbb{R}) \\mid \\text{trace}(A) = 0 \\} \\) (ma trận vết 0). Số chiều của W là:", options: ["1", "2", "3", "4"], correct: 2, level: "hard", explanation: "Điều kiện \\(a+d=0\\) (với \\(A = \\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}\\)). \\(\\dim M_2 = 4\\), ràng buộc tuyến tính 1 → \\(\\dim = 3\\).", tip: "💡 Cơ sở: \\(\\begin{bmatrix}1&0\\\\0&-1\\end{bmatrix}, \\begin{bmatrix}0&1\\\\0&0\\end{bmatrix}, \\begin{bmatrix}0&0\\\\1&0\\end{bmatrix}\\)." }
+    ];
+    
+    let userAnswers = new Array(20).fill(null);
+    
+    // Hàm render MathJax cho toàn bộ nội dung động
+    function renderMathJax() {
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+        }
+    }
+    
+    // Hàm render lại toàn bộ câu hỏi
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        questionsData.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            const levelClass = q.level === 'theory' ? 'theory' : (q.level === 'easy' ? 'easy' : (q.level === 'medium' ? 'medium' : 'hard'));
+            let levelText = q.level === 'theory' ? '📘 Lý thuyết' : (q.level === 'easy' ? '✅ Dễ' : (q.level === 'medium' ? '⚡ Trung bình' : '🔥 Khó'));
+            card.innerHTML = `
+                <div class="question-header">
+                    <span class="q-num">Câu ${idx+1}</span>
+                    <span class="level ${levelClass}">${levelText}</span>
+                </div>
+                <div class="question-text math">${q.text}</div>
+                <div class="options" id="options-${idx}"></div>
+                <div class="feedback" id="fb-${idx}"></div>
+            `;
+            container.appendChild(card);
+            const optsDiv = document.getElementById(`options-${idx}`);
+            q.options.forEach((opt, optIdx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'opt';
+                const letter = String.fromCharCode(65+optIdx);
+                optDiv.innerHTML = `<div class="opt-letter">${letter}</div><div class="opt-text math">${opt}</div>`;
+                optDiv.addEventListener('click', () => handleAnswer(idx, optIdx));
+                optsDiv.appendChild(optDiv);
+            });
+            if (userAnswers[idx] !== null) {
+                highlightSelected(idx);
+                showFeedback(idx);
+            }
+        });
+        // Render MathJax sau khi thêm nội dung mới
+        renderMathJax();
+        updateStats();
+    }
+    
+    function handleAnswer(qIdx, selectedIdx) {
+        userAnswers[qIdx] = selectedIdx;
+        highlightSelected(qIdx);
+        showFeedback(qIdx);
+        updateStats();
+        // Render lại MathJax để hiển thị công thức trong phần giải thích (nếu có)
+        renderMathJax();
+    }
+    
+    function highlightSelected(qIdx) {
+        const container = document.getElementById('questionsContainer');
+        const card = container.children[qIdx];
+        if (!card) return;
+        const opts = card.querySelectorAll('.opt');
+        const correctIdx = questionsData[qIdx].correct;
+        const selected = userAnswers[qIdx];
+        opts.forEach((opt, i) => {
+            opt.classList.remove('correct-choice', 'wrong-choice');
+            if (selected !== null && i === selected) {
+                opt.classList.add(i === correctIdx ? 'correct-choice' : 'wrong-choice');
+            }
+        });
+        if (selected !== null) {
+            opts[correctIdx].classList.add('correct-choice');
+        }
+    }
+    
+    function showFeedback(qIdx) {
+        const fbDiv = document.getElementById(`fb-${qIdx}`);
+        if (!fbDiv) return;
+        const q = questionsData[qIdx];
+        const selected = userAnswers[qIdx];
+        if (selected === null) {
+            fbDiv.style.display = 'none';
+            fbDiv.classList.remove('correct-feedback','wrong-feedback');
+            return;
+        }
+        const isCorrect = (selected === q.correct);
+        const correctLetter = String.fromCharCode(65+q.correct);
+        const correctAnswerText = q.options[q.correct];
+        fbDiv.innerHTML = `
+            <div><strong>${isCorrect ? '✅ Đúng rồi!' : '❌ Sai rồi!'}</strong> Đáp án đúng: ${correctLetter}. ${correctAnswerText}</div>
+            <div>📖 Giải thích: ${q.explanation}</div>
+            <div class="tip">💡 Mẹo nhanh: ${q.tip}</div>
+        `;
+        fbDiv.classList.remove('correct-feedback','wrong-feedback');
+        fbDiv.classList.add(isCorrect ? 'correct-feedback' : 'wrong-feedback');
+        fbDiv.style.display = 'block';
+    }
+    
+    function updateStats() {
+        const answered = userAnswers.filter(a => a !== null).length;
+        document.getElementById('scoreDisplay').innerHTML = `📊 Đã trả lời: ${answered} / 20`;
+    }
+    
+    function resetQuiz() {
+        userAnswers.fill(null);
+        renderQuestions();
+    }
+    
+    function downloadHTML() {
+        // Tạo bản sao HTML hiện tại để tải về
+        const htmlContent = document.documentElement.outerHTML;
+        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'trac_nghiem_khong_gian_vector_con_mathjax.html';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+    
+    // Khởi tạo và thêm sự kiện
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+    document.getElementById('downloadBtn').addEventListener('click', downloadHTML);
+    renderQuestions();
+</script>
+</body>
+</html>
