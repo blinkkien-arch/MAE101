@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Trắc nghiệm: Độc lập tuyến tính | Đại số tuyến tính | MathJax chuẩn</title>
+    <!-- Cấu hình MathJax 3 chuẩn chỉnh, hỗ trợ đầy đủ các lệnh LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                packages: ['base', 'ams', 'boldsymbol', 'newcommand'],
+                tags: 'none'
+            },
+            startup: {
+                typeset: false,  // sẽ gọi thủ công sau khi load
+                ready: function() {
+                    MathJax.startup.defaultReady();
+                }
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'math',
+                renderActions: {
+                    addMenu: []  // tắt menu chuột phải cho gọn
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d4e0ec);
+            font-family: 'Segoe UI', 'Roboto', 'Times New Roman', serif;
+            padding: 30px 20px;
+            color: #1e2f3e;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35);
+            overflow: hidden;
+            padding: 20px 28px 40px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #1a4b6e;
+            border-left: 8px solid #e67e22;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+        .sub {
+            color: #2c3e66;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #b0c4de;
+            padding-bottom: 12px;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #f0f4fa;
+            padding: 12px 24px;
+            border-radius: 60px;
+        }
+        .badge { background: #1e466e; color: white; border-radius: 40px; padding: 6px 18px; font-weight: bold; font-size: 0.85rem; }
+        .stats { font-weight: bold; background: #e9ecef; padding: 5px 15px; border-radius: 30px; }
+        button {
+            background: #2c7da0; border: none; color: white; padding: 8px 20px;
+            border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.85rem;
+        }
+        button:hover { background: #1f5068; transform: scale(0.97); }
+        .question-card {
+            background: #ffffff; border-radius: 28px; margin-bottom: 28px; padding: 20px 26px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05); border: 1px solid #e2edf7;
+            transition: all 0.2s;
+        }
+        .question-header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .q-num { background: #0b5e7e; color: white; font-weight: bold; border-radius: 40px; padding: 4px 14px; font-size: 0.85rem; }
+        .level { font-size: 0.7rem; background: #f4d03f; padding: 4px 12px; border-radius: 30px; font-weight: bold; }
+        .level.easy { background: #a9dfbf; color: #145a32; }
+        .level.medium { background: #f9e79f; color: #7d6608; }
+        .level.hard { background: #f5b7b1; color: #7b241c; }
+        .level.theory { background: #d2b4de; color: #4a235a; }
+        .question-text {
+            font-size: 1.1rem; font-weight: 500; margin: 12px 0 18px 0; line-height: 1.45;
+            background: #fefcf5; padding: 8px 14px; border-radius: 20px;
+        }
+        .options { display: flex; flex-direction: column; gap: 12px; margin: 12px 0 12px; }
+        .opt {
+            background: #f8faff; border: 1px solid #ccdbe9; border-radius: 50px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 18px; cursor: pointer; transition: all 0.2s;
+        }
+        .opt:hover { background: #eef3fc; border-color: #6c8fb3; transform: translateX(3px); }
+        .opt-letter { font-weight: bold; background: #e2eaf5; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 30px; font-size: 1rem; }
+        .opt-text { flex: 1; font-size: 0.98rem; }
+        .feedback {
+            margin-top: 16px; padding: 14px 20px; border-radius: 20px; background: #f1f9ff;
+            display: none; border-left: 6px solid #2c7da0; font-size: 0.95rem; line-height: 1.45;
+        }
+        .feedback.correct-feedback { background: #e0f2e9; border-left-color: #2e7d32; display: block; }
+        .feedback.wrong-feedback { background: #ffe6e5; border-left-color: #c0392b; display: block; }
+        .correct-choice { background: #c8f0d1 !important; border-color: #2e7d32 !important; }
+        .wrong-choice { background: #ffdad8 !important; border-color: #c0392b !important; }
+        .tip { font-size: 0.85rem; margin-top: 8px; color: #c4450c; font-weight: 500; background: #fff3e0; padding: 6px 12px; border-radius: 20px; display: inline-block; }
+        .download-area { text-align: center; margin-top: 40px; }
+        #downloadBtn { background: #2c3e50; padding: 12px 36px; font-size: 1rem; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        footer { text-align: center; margin-top: 25px; font-size: 0.75rem; opacity: 0.7; }
+        @media (max-width: 700px) { .container { padding: 15px; } .opt { padding: 8px 12px; } .question-text { font-size: 1rem; } }
+        /* Đảm bảo công thức toán không bị tràn */
+        .math-inline, .math-display, mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+    </style>
+</head>
+<body>
+<div class="container" id="quizApp">
+    <h1>📐 Độc lập tuyến tính (Linear Independence)</h1>
+    <div class="sub">Kiểm tra kiến thức về hệ vector độc lập tuyến tính / phụ thuộc tuyến tính, hạng, cơ sở | <strong>MathJax</strong> hiển thị công thức chuẩn chỉnh</div>
+    <div class="filter-bar">
+        <div class="badge">🎯 20 câu (5 lý thuyết + 15 bài tập: 5 dễ, 5 TB, 5 khó)</div>
+        <div class="stats" id="scoreDisplay">📊 Đã trả lời: 0 / 20</div>
+        <button id="resetBtn">🔄 Làm lại tất cả</button>
+    </div>
+    <div id="questionsContainer"></div>
+    <div class="download-area">
+        <button id="downloadBtn">💾 Tải file HTML (đề + đáp án chi tiết)</button>
+    </div>
+    <footer>✨ Bấm đáp án → xanh (đúng) / đỏ (sai) + giải thích + mẹo nhanh. <strong>Mọi công thức đều được render bằng MathJax chuẩn LaTeX.</strong></footer>
+</div>
+
+<script>
+    // -------------------- BỘ ĐỀ: ĐỘC LẬP TUYẾN TÍNH --------------------
+    // 5 lý thuyết + 5 dễ + 5 trung bình + 5 khó
+    const questionsData = [
+        // ========== LÝ THUYẾT (5 câu) ==========
+        { id: 1, text: "Hệ vector \\(\\{v_1, v_2, ..., v_k\\}\\) được gọi là phụ thuộc tuyến tính nếu:", options: ["Tồn tại tổ hợp tuyến tính bằng \\(\\mathbf{0}\\) với hệ số không đồng thời bằng 0", "Tất cả các vector đều bằng vector không", "Mọi tổ hợp tuyến tính đều bằng 0", "Các vector đôi một vuông góc"], correct: 0, level: "theory", explanation: "Định nghĩa: Hệ phụ thuộc tuyến tính nếu có \\(c_1v_1+...+c_kv_k=\\mathbf{0}\\) với ít nhất một \\(c_i \\neq 0\\).", tip: "📌 Mẹo: Hệ có vector không hoặc một vector là tổ hợp của các vector kia thì phụ thuộc." },
+        { id: 2, text: "Trong \\(\\mathbb{R}^3\\), hệ hai vector \\(u = (1,0,0)\\) và \\(v = (2,0,0)\\) là:", options: ["Độc lập tuyến tính", "Phụ thuộc tuyến tính", "Tạo thành cơ sở", "Có hạng bằng 2"], correct: 1, level: "theory", explanation: "Vì \\(v = 2u\\) nên tồn tại tổ hợp \\(2u - v = \\mathbf{0}\\) với hệ số không đồng thời bằng 0 → phụ thuộc tuyến tính.", tip: "🔍 Hai vector tỉ lệ thì phụ thuộc tuyến tính." },
+        { id: 3, text: "Hệ gồm một vector khác không \\(v \\neq \\mathbf{0}\\) là:", options: ["Độc lập tuyến tính", "Phụ thuộc tuyến tính", "Vừa độc lập vừa phụ thuộc", "Không xác định"], correct: 0, level: "theory", explanation: "Phương trình \\(c v = \\mathbf{0}\\) chỉ có nghiệm \\(c=0\\) nên hệ độc lập tuyến tính.", tip: "✨ Một vector khác không luôn độc lập tuyến tính." },
+        { id: 4, text: "Nếu một hệ vector chứa vector không, thì hệ đó:", options: ["Luôn độc lập tuyến tính", "Luôn phụ thuộc tuyến tính", "Có thể độc lập hoặc phụ thuộc", "Có hạng bằng số vector"], correct: 1, level: "theory", explanation: "Giả sử \\(v_1=\\mathbf{0}\\), ta có \\(1\\cdot v_1 + 0\\cdot v_2+...+0\\cdot v_k = \\mathbf{0}\\) với hệ số \\(1\\neq0\\) → phụ thuộc tuyến tính.", tip: "⚠️ Bất kỳ hệ nào chứa vector không đều phụ thuộc tuyến tính." },
+        { id: 5, text: "Số vector tối đa độc lập tuyến tính trong \\(\\mathbb{R}^n\\) là:", options: ["\\(n\\)", "\\(n+1\\)", "\\(2n\\)", "vô hạn"], correct: 0, level: "theory", explanation: "Số chiều của \\(\\mathbb{R}^n\\) là n, do đó mọi hệ có nhiều hơn n vector đều phụ thuộc tuyến tính.", tip: "📏 dim = n → tối đa n vector độc lập." },
+        
+        // ========== DỄ (5 câu) ==========
+        { id: 6, text: "Xét hệ vector trong \\(\\mathbb{R}^2\\): \\(u=(1,2), v=(-2,-4)\\). Hệ này:", options: ["Độc lập tuyến tính", "Phụ thuộc tuyến tính", "Tạo thành cơ sở", "Có hạng bằng 2"], correct: 1, level: "easy", explanation: "Vì \\(v = -2u\\) nên hai vector tỉ lệ → phụ thuộc tuyến tính.", tip: "💡 Nếu \\(v = k u\\) thì phụ thuộc." },
+        { id: 7, text: "Trong \\(\\mathbb{R}^3\\), hệ \\(\\{(1,0,0), (0,1,0), (0,0,1)\\}\\) là:", options: ["Phụ thuộc tuyến tính", "Độc lập tuyến tính và là cơ sở chính tắc", "Phụ thuộc và không sinh ra \\(\\mathbb{R}^3\\)", "Có hạng 2"], correct: 1, level: "easy", explanation: "Ba vector tạo thành ma trận đơn vị, định thức khác 0 → độc lập tuyến tính.", tip: "✅ Ma trận vuông với det ≠ 0 thì các vector dòng/cột độc lập." },
+        { id: 8, text: "Hệ \\(\\{(1,1), (2,3)\\}\\) trong \\(\\mathbb{R}^2\\) có tính chất:", options: ["Phụ thuộc tuyến tính", "Độc lập tuyến tính", "Một vector là tổ hợp của vector kia", "Không sinh được \\(\\mathbb{R}^2\\)"], correct: 1, level: "easy", explanation: "Định thức \\(\\begin{vmatrix}1&1\\\\2&3\\end{vmatrix} = 3-2=1 \\neq 0\\) → độc lập tuyến tính.", tip: "📐 Hai vector trong mặt phẳng độc lập nếu không tỉ lệ." },
+        { id: 9, text: "Trong \\(\\mathbb{R}^3\\), hệ \\(\\{(1,2,3), (2,4,6)\\}\\):", options: ["Độc lập tuyến tính", "Phụ thuộc tuyến tính", "Là cơ sở của \\(\\mathbb{R}^3\\)", "Có hạng 3"], correct: 1, level: "easy", explanation: "Vector thứ hai = 2 lần vector thứ nhất → phụ thuộc.", tip: "🔁 Tỉ lệ từng thành phần → phụ thuộc." },
+        { id: 10, text: "Hệ gồm 4 vector bất kỳ trong \\(\\mathbb{R}^3\\):", options: ["Luôn độc lập tuyến tính", "Luôn phụ thuộc tuyến tính", "Có thể độc lập nếu chọn đúng", "Có hạng bằng 4"], correct: 1, level: "easy", explanation: "Số chiều \\(\\mathbb{R}^3\\) là 3, số vector > 3 thì luôn phụ thuộc tuyến tính.", tip: "📌 Số vector > số chiều → phụ thuộc tuyến tính." },
+        
+        // ========== TRUNG BÌNH (5 câu) ==========
+        { id: 11, text: "Xét hệ \\(\\{ (1,0,-1), (2,1,0), (0,1,1) \\}\\) trong \\(\\mathbb{R}^3\\). Kết luận:", options: ["Độc lập tuyến tính", "Phụ thuộc tuyến tính", "Hệ sinh có hạng 2", "Là cơ sở"], correct: 0, level: "medium", explanation: "Định thức ma trận \\(\\begin{vmatrix}1&0&-1\\\\2&1&0\\\\0&1&1\\end{vmatrix}=1(1\\cdot1-0\\cdot1)-0+(-1)(2\\cdot1-1\\cdot0)=1-2=-1\\neq0\\) → độc lập.", tip: "🧮 Tính định thức hoặc hạng ma trận." },
+        { id: 12, text: "Trong \\(\\mathbb{R}^4\\), hệ \\(\\{(1,0,0,1), (0,1,0,1), (0,0,1,1), (1,1,1,3)\\}\\):", options: ["Độc lập", "Phụ thuộc vì vector cuối là tổng 3 vector đầu", "Có hạng 4", "Sinh ra không gian 4 chiều"], correct: 1, level: "medium", explanation: "Nhận thấy \\((1,1,1,3) = (1,0,0,1)+(0,1,0,1)+(0,0,1,1)\\) → phụ thuộc tuyến tính.", tip: "🔍 Quan sát quan hệ cộng: tổ hợp tuyến tính dễ thấy." },
+        { id: 13, text: "Cho \\(u=(1,1,1), v=(1,2,3), w=(2,3,4)\\). Hệ \\(\\{u,v,w\\}\\):", options: ["Độc lập", "Phụ thuộc vì w = u+v", "Phụ thuộc vì w = v-u", "Có hạng 3"], correct: 1, level: "medium", explanation: "Kiểm tra: \\(u+v = (2,3,4) = w\\) → w là tổ hợp → phụ thuộc.", tip: "⚡ Nếu một vector bằng tổ hợp tuyến tính của các vector còn lại → phụ thuộc." },
+        { id: 14, text: "Trong không gian các đa thức bậc ≤2, hệ \\(\\{1, x, x^2\\}\\) là:", options: ["Phụ thuộc tuyến tính", "Độc lập tuyến tính và là cơ sở", "Không sinh được không gian", "Có hạng 2"], correct: 1, level: "medium", explanation: "Các đa thức 1, x, x^2 độc lập tuyến tính vì \\(a+bx+cx^2=0\\) ∀x ⇒ a=b=c=0.", tip: "📚 Đây là cơ sở chính tắc của \\(\\mathcal{P}_2\\), dim=3." },
+        { id: 15, text: "Cho các vector \\(v_1=(1,0), v_2=(1,1), v_3=(0,1)\\) trong \\(\\mathbb{R}^2\\). Hệ này:", options: ["Độc lập tuyến tính", "Phụ thuộc vì số vector > dim", "Độc lập vì không có vector nào là tổ hợp", "Tạo thành cơ sở"], correct: 1, level: "medium", explanation: "Trong \\(\\mathbb{R}^2\\) có số chiều 2, hệ 3 vector chắc chắn phụ thuộc tuyến tính.", tip: "📏 Hệ quả: số vector > số chiều → phụ thuộc." },
+        
+        // ========== KHÓ (5 câu) ==========
+        { id: 16, text: "Trong \\(\\mathbb{R}^3\\), xét hệ \\(\\{ (1,1,1), (1,2,3), (1,3,5) \\}\\). Tìm hạng của hệ:", options: ["1", "2", "3", "0"], correct: 1, level: "hard", explanation: "Ma trận \\(\\begin{bmatrix}1&1&1\\\\1&2&3\\\\1&3&5\\end{bmatrix}\\) → dòng2-dòng1=(0,1,2), dòng3-dòng2=(0,1,2) trùng → chỉ 2 dòng độc lập, hạng=2.", tip: "🔢 Biến đổi sơ cấp hoặc tính định thức con cấp 3 bằng 0." },
+        { id: 17, text: "Cho \\(u=(1,2,-1), v=(0,1,1), w=(2,5,-1)\\). Hệ \\(\\{u,v,w\\}\\):", options: ["Độc lập tuyến tính", "Phụ thuộc vì \\(w = 2u + v\\)", "Phụ thuộc vì \\(w = u + 2v\\)", "Độc lập vì det≠0"], correct: 1, level: "hard", explanation: "Kiểm tra \\(2u+v = (2,4,-2)+(0,1,1)=(2,5,-1)=w\\) → phụ thuộc.", tip: "🧩 Thử tổ hợp đơn giản: nhìn hệ số phối hợp." },
+        { id: 18, text: "Trong \\(\\mathbb{R}^4\\), cho các vector \\(v_1=(1,0,1,0), v_2=(0,1,0,1), v_3=(1,1,1,1), v_4=(1,-1,1,-1)\\). Số vector độc lập tối đa trong hệ là:", options: ["2", "3", "4", "1"], correct: 0, level: "hard", explanation: "Lập ma trận và tìm hạng: \\(v_3 = v_1+v_2\\), \\(v_4 = v_1 - v_2\\). Vậy \\(v_1,v_2\\) độc lập, \\(v_3,v_4\\) tổ hợp từ \\(v_1,v_2\\) → hạng =2.", tip: "📌 Phát hiện quan hệ tuyến tính nhanh bằng cách quan sát." },
+        { id: 19, text: "Trong không gian ma trận \\(M_{2\\times2}(\\mathbb{R})\\), hệ gồm các ma trận: \\(A=\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}, B=\\begin{bmatrix}0&1\\\\0&0\\end{bmatrix}, C=\\begin{bmatrix}0&0\\\\1&0\\end{bmatrix}, D=\\begin{bmatrix}0&0\\\\0&1\\end{bmatrix}\\) là:", options: ["Phụ thuộc tuyến tính", "Độc lập tuyến tính và là cơ sở", "Phụ thuộc vì có 4 ma trận", "Có hạng 3"], correct: 1, level: "hard", explanation: "Đây là 4 ma trận đơn vị cơ sở của \\(M_{2\\times2}\\), dim=4, chúng độc lập tuyến tính.", tip: "🌟 Ma trận cơ sở chuẩn: \\(E_{11},E_{12},E_{21},E_{22}\\) độc lập." },
+        { id: 20, text: "Cho hệ vector \\(\\{ (1,0,0), (1,1,0), (1,1,1), (0,1,1) \\}\\) trong \\(\\mathbb{R}^3\\). Kết luận đúng:", options: ["Hệ độc lập tuyến tính", "Hệ phụ thuộc, hạng = 3", "Hệ phụ thuộc, hạng = 2", "Hệ có 4 vector độc lập"], correct: 1, level: "hard", explanation: "Số vector là 4 > dim=3 nên phụ thuộc. Hạng =3 vì 3 vector đầu \\((1,0,0),(1,1,0),(1,1,1)\\) độc lập (det ma trận 3x3 = 1).", tip: "🎯 Trong R^3, hệ 4 vector luôn phụ thuộc, hạng ≤3." }
+    ];
+
+    let userAnswers = new Array(20).fill(null);
+
+    // Hàm render MathJax chuẩn cho toàn bộ nội dung
+    function renderMathJax() {
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise().catch(err => console.warn('MathJax render error:', err));
+        }
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        questionsData.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            const levelClass = q.level === 'theory' ? 'theory' : (q.level === 'easy' ? 'easy' : (q.level === 'medium' ? 'medium' : 'hard'));
+            let levelText = q.level === 'theory' ? '📘 Lý thuyết' : (q.level === 'easy' ? '✅ Dễ' : (q.level === 'medium' ? '⚡ Trung bình' : '🔥 Khó'));
+            card.innerHTML = `
+                <div class="question-header">
+                    <span class="q-num">Câu ${idx+1}</span>
+                    <span class="level ${levelClass}">${levelText}</span>
+                </div>
+                <div class="question-text math">${q.text}</div>
+                <div class="options" id="options-${idx}"></div>
+                <div class="feedback" id="fb-${idx}"></div>
+            `;
+            container.appendChild(card);
+            const optsDiv = document.getElementById(`options-${idx}`);
+            q.options.forEach((opt, optIdx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'opt';
+                const letter = String.fromCharCode(65+optIdx);
+                optDiv.innerHTML = `<div class="opt-letter">${letter}</div><div class="opt-text math">${opt}</div>`;
+                optDiv.addEventListener('click', () => handleAnswer(idx, optIdx));
+                optsDiv.appendChild(optDiv);
+            });
+            if (userAnswers[idx] !== null) {
+                highlightSelected(idx);
+                showFeedback(idx);
+            }
+        });
+        // Render MathJax sau khi thêm toàn bộ nội dung
+        renderMathJax();
+        updateStats();
+    }
+
+    function handleAnswer(qIdx, selectedIdx) {
+        userAnswers[qIdx] = selectedIdx;
+        highlightSelected(qIdx);
+        showFeedback(qIdx);
+        updateStats();
+        // Render lại MathJax để hiển thị công thức trong phần feedback (nếu có)
+        renderMathJax();
+    }
+
+    function highlightSelected(qIdx) {
+        const container = document.getElementById('questionsContainer');
+        const card = container.children[qIdx];
+        if (!card) return;
+        const opts = card.querySelectorAll('.opt');
+        const correctIdx = questionsData[qIdx].correct;
+        const selected = userAnswers[qIdx];
+        opts.forEach((opt, i) => {
+            opt.classList.remove('correct-choice', 'wrong-choice');
+            if (selected !== null && i === selected) {
+                opt.classList.add(i === correctIdx ? 'correct-choice' : 'wrong-choice');
+            }
+        });
+        if (selected !== null) {
+            opts[correctIdx].classList.add('correct-choice');
+        }
+    }
+
+    function showFeedback(qIdx) {
+        const fbDiv = document.getElementById(`fb-${qIdx}`);
+        if (!fbDiv) return;
+        const q = questionsData[qIdx];
+        const selected = userAnswers[qIdx];
+        if (selected === null) {
+            fbDiv.style.display = 'none';
+            fbDiv.classList.remove('correct-feedback','wrong-feedback');
+            return;
+        }
+        const isCorrect = (selected === q.correct);
+        const correctLetter = String.fromCharCode(65+q.correct);
+        const correctAnswerText = q.options[q.correct];
+        fbDiv.innerHTML = `
+            <div><strong>${isCorrect ? '✅ Đúng rồi!' : '❌ Sai rồi!'}</strong> Đáp án đúng: ${correctLetter}. ${correctAnswerText}</div>
+            <div>📖 Giải thích: ${q.explanation}</div>
+            <div class="tip">💡 Mẹo nhanh: ${q.tip}</div>
+        `;
+        fbDiv.classList.remove('correct-feedback','wrong-feedback');
+        fbDiv.classList.add(isCorrect ? 'correct-feedback' : 'wrong-feedback');
+        fbDiv.style.display = 'block';
+    }
+
+    function updateStats() {
+        const answered = userAnswers.filter(a => a !== null).length;
+        document.getElementById('scoreDisplay').innerHTML = `📊 Đã trả lời: ${answered} / 20`;
+    }
+
+    function resetQuiz() {
+        userAnswers.fill(null);
+        renderQuestions();
+    }
+
+    function downloadHTML() {
+        const htmlContent = document.documentElement.outerHTML;
+        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'trac_nghiem_doc_lap_tuyen_tinh_mathjax.html';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+    document.getElementById('downloadBtn').addEventListener('click', downloadHTML);
+    renderQuestions();
+</script>
+</body>
+</html>
